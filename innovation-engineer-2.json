@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "innovation-engineer",
+  "private_key_id": "",
+  "private_key": "",
+  "client_email": "pipeline@innovation-engineer.iam.gserviceaccount.com",
+  "client_id": "113564054338838369555",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pipeline%40innovation-engineer.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
