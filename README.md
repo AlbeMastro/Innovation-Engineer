@@ -1,6 +1,7 @@
 **Data Pipeline with Google Sheets and Google Analytics Integration**
 
 **Descrizione**
+
 Questo progetto implementa una pipeline di dati automatizzata utilizzando Python e Apache Airflow. La pipeline estrae dati da Google Sheets e, in una versione alternativa, anche da Google Analytics. L'obiettivo principale è trasformare, pulire e caricare questi dati su Google Cloud Storage (GCS) e successivamente in BigQuery per analisi avanzate.
 
 **Funzionalità della Pipeline**
