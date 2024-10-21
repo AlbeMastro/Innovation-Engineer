@@ -1,10 +1,11 @@
-Data Pipeline with Google Sheets and Google Analytics Integration
+**Data Pipeline with Google Sheets and Google Analytics Integration**
 
-Descrizione
+**Descrizione**
 Questo progetto implementa una pipeline di dati automatizzata utilizzando Python e Apache Airflow. La pipeline estrae dati da Google Sheets e, in una versione alternativa, anche da Google Analytics. L'obiettivo principale è trasformare, pulire e caricare questi dati su Google Cloud Storage (GCS) e successivamente in BigQuery per analisi avanzate.
 
-Funzionalità della Pipeline
-Estrazione dei Dati:
+**Funzionalità della Pipeline**
+
+**Estrazione dei Dati**:
 
 Estrazione automatica dei dati da Google Sheets utilizzando le API di Google Sheets.
 I dati riguardano informazioni di marketing e budget estratti dai fogli di calcolo.
@@ -23,15 +24,16 @@ Gestione delle varie fasi della pipeline (estrazione, pulizia, caricamento) tram
 Scheduler configurato per eseguire la pipeline su base giornaliera e per gestire anche intervalli di date specifiche.
 Struttura del Codice
 Estratto Principale
+
 Il codice è strutturato in tre funzioni principali:
 
-extract_and_filter_data: Estrae i dati da Google Sheets e li filtra per un intervallo di date specificato. In alternativa, la versione estesa permette l'estrazione diretta dei dati da Google Analytics per analizzare metriche di sessione e comportamento degli utenti.
+**extract_and_filter_data**: Estrae i dati da Google Sheets e li filtra per un intervallo di date specificato. In alternativa, la versione estesa permette l'estrazione diretta dei dati da Google Analytics per analizzare metriche di sessione e comportamento degli utenti.
 
-clean_data: Pulisce i dati estratti, gestendo valori mancanti e rimuovendo colonne superflue. I dati vengono salvati in formato CSV in una cartella temporanea prima di essere caricati su GCS.
+**clean_data**: Pulisce i dati estratti, gestendo valori mancanti e rimuovendo colonne superflue. I dati vengono salvati in formato CSV in una cartella temporanea prima di essere caricati su GCS.
 
-upload_to_gcs_and_bigquery: Carica i file CSV puliti su Google Cloud Storage e successivamente li importa in tabelle BigQuery per permettere l'analisi dei dati tramite SQL.
+**upload_to_gcs_and_bigquery**: Carica i file CSV puliti su Google Cloud Storage e successivamente li importa in tabelle BigQuery per permettere l'analisi dei dati tramite SQL.
 
-Considerazioni sull'Utilizzo dei Dati
+**Considerazioni sull'Utilizzo dei Dati**
 Durante lo sviluppo della pipeline, si è presentato un dubbio riguardante i dati da utilizzare:
 
 Dati da Google Sheets: Questa è stata la scelta iniziale, utilizzando i dataset forniti come mockup per simulare i dati di marketing e budget.
