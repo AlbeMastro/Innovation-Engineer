@@ -1,6 +1,13 @@
-# 1 FUNZIONE PIPELINE
+import gspread
+from google.oauth2.service_account import Credentials
+import pandas as pd
+import time
+import warnings
+import re
+from google.cloud import storage
+from google.cloud import bigquery
+import os
 
-from airflow.example_dags.example_external_task_marker_dag import start_date
 
 
 def extract_and_filter_data(start_date=None, end_date=None):
@@ -11,15 +18,8 @@ def extract_and_filter_data(start_date=None, end_date=None):
         start_date: Data di inizio dell'intervallo (formato 'YYYY-MM-DD').
         end_date: Data di fine dell'intervallo (formato 'YYYY-MM-DD').
             Se end_date è None, verrà utilizzato start_date per un singolo giorno.
-
-    Returns:
-        df_ga_filtered: DataFrame dei dati di Google Analytics filtrati.
-        df_budget: DataFrame dei dati di budget.
     """
-    import gspread
-    from google.oauth2.service_account import Credentials
-    import pandas as pd
-    import time
+
 
     # Configurazione delle credenziali
     creds_path = '/Users/Alberto/PycharmProjects/Pipeline/dags/innovation-engineer-2.json'
@@ -35,6 +35,7 @@ def extract_and_filter_data(start_date=None, end_date=None):
 
     # Estrazione dei dati dai Google Sheets con meccanismo di retry
     max_retries = 3
+    successful = False  # Flag per controllare se l'operazione è riuscita
     for attempt in range(max_retries):
         try:
             sheet_id_budget = '1412wCpCV0TQKaPHuWBM5_Ujca4f9_H8lqCJRyfoWcE0'
@@ -53,18 +54,19 @@ def extract_and_filter_data(start_date=None, end_date=None):
             df_ga = pd.DataFrame(data_ga)
 
             print("Dati estratti correttamente da Google Sheets.")
-            break
+            successful = True  # Se riesce, imposta il flag a True
+            break  # Esce dal ciclo se l'estrazione è andata a buon fine
         except gspread.exceptions.APIError as e:
             print(
                 f"Errore API durante l'estrazione dei dati (tentativo {attempt + 1} di {max_retries}): {e}. Riprovo...")
             time.sleep(2)  # Attesa prima di un nuovo tentativo
         except Exception as e:
             print(f"Errore generico durante l'estrazione dei dati (tentativo {attempt + 1} di {max_retries}): {e}")
-            time.sleep(2)
-        else:
-            print(
-                f"Errore persistente dopo {max_retries} tentativi. Verifica manualmente lo stato dell'API o della connessione.")
-            return
+            time.sleep(2)  # Attesa prima di un nuovo tentativo
+
+    # Verifica se l'estrazione è fallita dopo i tentativi
+    if not successful:
+        raise RuntimeError(f"Errore persistente dopo {max_retries} tentativi. Verifica manualmente lo stato dell'API o della connessione.")
 
     # Conversione della colonna di data in formato datetime con gestione degli errori
     try:
@@ -132,23 +134,15 @@ start_date = '2024-08-01'
 end_date = '2024-08-09'
 extract_and_filter_data(start_date= start_date, end_date= end_date)
 
-# 2 FUNZIONE PIPELINE
-import pandas as pd
-import warnings
-import re
 
-# 2 FUNZIONE PIPELINE
 
 def clean_data():
     """
     Carica i dataset estratti dalla pipeline, applica le operazioni di pulizia specificate,
     e restituisce i dataframe puliti.
-
-    Returns:
-        df_budget_cleaned: DataFrame del budget ripulito.
-        df_ga_cleaned: DataFrame dei dati di Google Analytics filtrati e puliti.
     """
-    # Disattivare i FutureWarning di Pandas
+
+    # Disattivazione dei FutureWarning di Pandas
     warnings.filterwarnings('ignore', category=FutureWarning)
 
     base_path = '/Users/Alberto/PycharmProjects/Pipeline/dags/'
@@ -193,7 +187,7 @@ def clean_data():
         match = re.match(r'(https?://(?:www\.)?[^/]+)', url)
         return match.group(1) if match else url
 
-    # Applica il parsing alla colonna 'event_param_string_value' per estrarre i domini
+    # Parsing alla colonna 'event_param_string_value' per estrarre i domini
     df_ga_filtered['event_param_string_value'] = df_ga_filtered['event_param_string_value'].apply(parse_url)
 
     # Salvataggio del dataset pulito df_ga_filtered
@@ -201,31 +195,22 @@ def clean_data():
     print("Pulizia di df_ga completata e salvata in 'cleaned_filtered_ga_data.csv'.")
 
 
-# Eseguire la funzione di pulizia
 clean_data()
 
 
-# 3 FUNZIONE PIPELINE
 def upload_to_gcs_and_bigquery(bucket_name, project_id, dataset_id):
     """
     Carica i file CSV puliti su Google Cloud Storage e li importa in BigQuery.
 
-    Args:
-        bucket_name: Il nome del bucket GCS.
-        project_id: L'ID del progetto Google Cloud.
-        dataset_id: L'ID del dataset BigQuery.
     """
-    from google.cloud import storage
-    from google.cloud import bigquery
-    import os
 
     base_path = '/Users/Alberto/PycharmProjects/Pipeline/dags/'
 
-    # Imposta le credenziali di autenticazione
+    # Credenziali di autenticazione
     creds_path = '/Users/Alberto/PycharmProjects/Pipeline/dags/innovation-engineer-2.json'
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = creds_path
 
-    # Definisci i nomi dei file CSV locali
+    # Nomi dei file CSV locali
     local_path_budget = f'{base_path}cleaned_data_budget.csv'
     local_path_ga = f'{base_path}cleaned_filtered_ga_data.csv'
     uri_budget = f'gs://{bucket_name}/cleaned_data_budget.csv'
@@ -254,7 +239,7 @@ def upload_to_gcs_and_bigquery(bucket_name, project_id, dataset_id):
     try:
         bigquery_client = bigquery.Client()
 
-        # Imposta le configurazioni di caricamento per il budget
+        # Configurazioni di caricamento per il budget
         table_id_budget = f"{project_id}.{dataset_id}.budget_data"
         job_config_budget = bigquery.LoadJobConfig(
             source_format=bigquery.SourceFormat.CSV,
@@ -269,7 +254,7 @@ def upload_to_gcs_and_bigquery(bucket_name, project_id, dataset_id):
         load_job_budget.result()  # Attendi il completamento del job
         print(f'Dati del budget caricati in BigQuery nella tabella: {table_id_budget}')
 
-        # Imposta le configurazioni di caricamento per GA
+        # Configurazioni di caricamento per GA
         table_id_ga = f"{project_id}.{dataset_id}.ga_data"
         job_config_ga = bigquery.LoadJobConfig(
             source_format=bigquery.SourceFormat.CSV,
@@ -281,7 +266,7 @@ def upload_to_gcs_and_bigquery(bucket_name, project_id, dataset_id):
             table_id_ga,
             job_config=job_config_ga,
         )
-        load_job_ga.result()  # Attendi il completamento del job
+        load_job_ga.result()  # Completamento del job
         print(f'Dati di Google Analytics caricati in BigQuery nella tabella: {table_id_ga}')
 
     except Exception as e:
