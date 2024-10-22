@@ -4,7 +4,7 @@
 
 Questo progetto ha come obiettivo l'implementazione di una pipeline resiliente che riceva dati da Google Sheet e da Google Analytics, automatizzi l'estrazione giornaliera e svolga analisi sui dati per fornire insights significativi.
 La pipeline sviluppata, estrae dati da Google Sheets (dati di budget e dati di ga), li pulisce e li carica su Google Cloud, rendendoli disponibili per l'analisi tramite BigQuery. L'intero processo è stato automatizzato utilizzando Apache Airflow.
-L'obiettivo principale quindi è trasformare, pulire e caricare questi dati su Google Cloud Storage (GCS) e successivamente in BigQuery per analisi avanzate.
+L'obiettivo principale quindi, è: trasformare, pulire e caricare questi dati su Google Cloud Storage (GCS) e successivamente in BigQuery per analisi avanzate.
 
 ## **Funzionalità della Pipeline**
 
