@@ -33,9 +33,3 @@ Il codice è strutturato in tre funzioni principali:
 
 - **`upload_to_gcs_and_bigquery`**: Carica i file CSV puliti su Google Cloud Storage e successivamente li importa in tabelle BigQuery per permettere l'analisi dei dati tramite SQL.
 
-## **Considerazioni sull'Utilizzo dei Dati**
-
-Durante lo sviluppo della pipeline, si è presentato un dubbio riguardante i dati da utilizzare:
-
-- **Dati da Google Sheets**: Questa è stata la scelta iniziale, utilizzando i dataset forniti come mockup per simulare i dati di marketing e budget.
-- **Dati da Google Analytics**: Poiché i dati di Google Analytics offrono un livello più dettagliato di analisi del traffico e delle interazioni degli utenti, è stata implementata una versione del codice in grado di estrarre tali dati. Tuttavia, non disponendo di un sito web personale con accesso diretto a Google Analytics, questa versione è stata sviluppata come estensione per scenari futuri.
