@@ -14,12 +14,7 @@ def extract_and_filter_data(start_date=None, end_date=None):
     """
     Estrae i dati da Google Sheets e li filtra in base all'intervallo di date specificato.
 
-    Args:
-        start_date: Data di inizio dell'intervallo (formato 'YYYY-MM-DD').
-        end_date: Data di fine dell'intervallo (formato 'YYYY-MM-DD').
-            Se end_date è None, verrà utilizzato start_date per un singolo giorno.
     """
-
 
     # Configurazione delle credenziali
     creds_path = '/Users/Alberto/PycharmProjects/Pipeline/dags/innovation-engineer-2.json'
