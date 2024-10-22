@@ -1,4 +1,4 @@
-# **Data Pipeline with Google Sheets and Google Analytics Integration**
+# **Pipeline di dati automatizzata**
 
 ## **Descrizione**
 
