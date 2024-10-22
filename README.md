@@ -2,8 +2,9 @@
 
 ## **Descrizione**
 
-Questo progetto implementa una pipeline di dati automatizzata utilizzando Python e Apache Airflow. La pipeline estrae dati da Google Sheets (contenenti dati di budget e dati di google analytics).
-L'obiettivo principale è trasformare, pulire e caricare questi dati su Google Cloud Storage (GCS) e successivamente in BigQuery per analisi avanzate.
+Questo progetto ha come obiettivo l'implementazione di una pipeline resiliente che riceva dati da Google Sheet e da Google Analytics, automatizzi l'estrazione giornaliera e svolga analisi sui dati per fornire insight significativi.
+La pipeline sviluppata estrae dati da Google Sheets (inclusi quelli relativi a budget e Google Analytics), li pulisce e li carica su Google Cloud, rendendoli disponibili per l'analisi tramite BigQuery. L'intero processo è stato automatizzato utilizzando Apache Airflow.
+L'obiettivo principale quindi è trasformare, pulire e caricare questi dati su Google Cloud Storage (GCS) e successivamente in BigQuery per analisi avanzate.
 
 ## **Funzionalità della Pipeline**
 
@@ -11,12 +12,12 @@ L'obiettivo principale è trasformare, pulire e caricare questi dati su Google C
   - Estrazione automatica dei dati da Google Sheets utilizzando le API di Google Sheets.
   - I dati riguardano informazioni di marketing e budget estratti dai fogli di calcolo.
 
-- **Pulizia e Normalizzazione**:
-  - Utilizzo di Pandas per trasformare i dati estratti, riempiendo valori mancanti e normalizzando i dati per una corretta analisi.
+- **Pulizia dei dataset**:
+  - Utilizzo di Pandas per trasformare i dati estratti, riempiendo valori mancanti, ripulendo i dati per una corretta analisi.
   - Creazione di copie pulite dei dataset che vengono salvate come file CSV.
 
 - **Caricamento su GCS e BigQuery**:
-  - Salvataggio dei file CSV puliti su Google Cloud Storage per garantire una copia persistente dei dati.
+  - Salvataggio dei file CSV ripuliti su Google Cloud Storage per garantire una copia persistente dei dati.
   - Caricamento automatico dei file salvati su BigQuery per facilitare l'esecuzione di query SQL e analisi avanzate.
 
 - **Automazione con Airflow**:
